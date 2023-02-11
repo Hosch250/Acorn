@@ -13,8 +13,19 @@ public class MySqlContext : DbContext
     }
 
     public DbSet<Post> Posts { get; set; }
+    public DbSet<Vote> Votes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseMySql(configuration.GetConnectionString("Database"),
-            ServerVersion.AutoDetect(configuration.GetConnectionString("Database")));
+    {
+        options
+            //.UseLazyLoadingProxies()
+            .UseMySql(configuration.GetConnectionString("Database"),
+                ServerVersion.AutoDetect(configuration.GetConnectionString("Database")));
+
+#if DEBUG
+        options.EnableSensitiveDataLogging();
+        options.EnableDetailedErrors();
+        options.LogTo(Console.WriteLine);
+#endif
+    }
 }

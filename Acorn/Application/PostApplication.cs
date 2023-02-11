@@ -22,14 +22,18 @@ public class PostApplication : IPostApplication
     // todo: update this to take skip values
     public async Task<List<ApiContracts.Post>> GetAll()
     {
-        var posts = await context.Posts.OrderByDescending(o => o.CreatedOn).Take(20).ToListAsync();
+        var posts = await context.Posts
+            .Include(i => i.Votes)
+            .OrderByDescending(o => o.CreatedOn)
+            .Take(20)
+            .ToListAsync();
 
         return posts.Select(mapper.Map<Domain.Entities.Post.Post, ApiContracts.Post>).ToList();
     }
 
     public async Task<ApiContracts.Post?> Get(Guid id)
     {
-        var post = await context.Posts.FindAsync(id);
+        var post = await context.Posts.Include(i => i.Votes).FirstOrDefaultAsync(f => f.Id == id);
         if (post is null)
         {
             return null;

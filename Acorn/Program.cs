@@ -4,7 +4,6 @@ using Acorn.Domain.Entities.Post;
 using Acorn.Infrastructure;
 using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -16,18 +15,7 @@ builder.Services.AddControllers();
 //builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Acorn", Version = "v1" }));
 
-builder.Services.AddDbContext<MySqlContext>(
-    dbContextOptions => dbContextOptions
-        .UseMySql(builder.Configuration.GetConnectionString("Database"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Database")))
-#if DEBUG
-        // The following three options help with debugging, but should
-        // be changed or removed for production.
-        .LogTo(Console.WriteLine, LogLevel.Information)
-        .EnableSensitiveDataLogging()
-        .EnableDetailedErrors()
-#endif
-);
+builder.Services.AddDbContext<MySqlContext>();
 
 builder.Services.AddTransient<IPostApplication, PostApplication>();
 builder.Services.AddTransient<PostFactory>();

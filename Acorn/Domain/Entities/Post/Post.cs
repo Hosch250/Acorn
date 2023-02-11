@@ -7,13 +7,11 @@ public class Post : AggregateRoot
     /// <summary>
     /// Used for deserialization
     /// </summary>
-    internal Post(Guid id, string title, string body, int upvoteCount, int downvoteCount, Guid createdBy, DateTime createdOn)
+    internal Post(Guid id, string title, string body, Guid createdBy, DateTime createdOn)
     {
         Id = id;
         Title = title;
         Body = body;
-        UpvoteCount = upvoteCount;
-        DownvoteCount = downvoteCount;
         CreatedBy = createdBy;
         CreatedOn = createdOn;
     }
@@ -24,36 +22,56 @@ public class Post : AggregateRoot
         Body = body;
         SetCreatedBy(createdBy);
 
-        Id = Guid.NewGuid();
-        UpvoteCount = 0;
-        DownvoteCount = 0;
+        Id = Guid.Empty;
     }
 
     public Guid Id { get; private set; }
     public string Title { get; private set; }
     public string Body { get; private set; }
-    public int UpvoteCount { get; private set; }
-    public int DownvoteCount { get; private set; }
+    public int UpvoteCount { get => Votes.Count(w => w.Type == VoteType.Upvote && w.RevokedOn is null); }
+    public int DownvoteCount { get => Votes.Count(w => w.Type == VoteType.Downvote && w.RevokedOn is null); }
+
+    public virtual List<Vote> Votes { get; private set; } = new();
 
     public async Task Upvote(Guid voteBy)
     {
         // validation happens in any event handler listening for this event
-        // e.g. Does the user have the upvote permission, has the user already upvoted, etc
+        // e.g. Does the user have the upvote permission, etc
         // await DomainEvents.Raise(new UpvotePost(command));
 
-        // todo: remove downvote if user previously downvoted
+        var activeVotes = Votes.Where(f => f.UserId == voteBy && f.RevokedOn is null).ToList();
+        if (activeVotes.Any(a => a.Type == VoteType.Upvote))
+        {
+            return;
+        }
 
-        UpvoteCount++;
+        if (activeVotes.Any(a => a.Type == VoteType.Downvote))
+        {
+            var downvote = activeVotes.First(a => a.Type == VoteType.Downvote);
+            downvote = downvote with { RevokedOn = DateTime.UtcNow };
+        }
+
+        Votes.Add(Vote.Upvote(Id, voteBy));
     }
 
     public async Task Downvote(Guid voteBy)
     {
         // validation happens in any event handler listening for this event
-        // e.g. Does the user have the upvote permission, has the user already downvoted, etc
+        // e.g. Does the user have the upvote permission, etc
         // await DomainEvents.Raise(new DownvotePost(command));
 
-        // todo: remove upvote if user previously upvoted
+        var activeVotes = Votes.Where(f => f.UserId == voteBy && f.RevokedOn is null).ToList();
+        if (activeVotes.Any(a => a.Type == VoteType.Downvote))
+        {
+            return;
+        }
 
-        DownvoteCount++;
+        if (activeVotes.Any(a => a.Type == VoteType.Upvote))
+        {
+            var upvote = activeVotes.First(a => a.Type == VoteType.Upvote);
+            upvote = upvote with { RevokedOn = DateTime.UtcNow };
+        }
+
+        Votes.Add(Vote.Downvote(Id, voteBy));
     }
 }
