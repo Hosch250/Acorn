@@ -17,10 +17,8 @@ public class MySqlContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options
-            //.UseLazyLoadingProxies()
-            .UseMySql(configuration.GetConnectionString("Database"),
-                ServerVersion.AutoDetect(configuration.GetConnectionString("Database")));
+        options.UseMySql(configuration.GetConnectionString("Database"),
+            ServerVersion.AutoDetect(configuration.GetConnectionString("Database")));
 
 #if DEBUG
         options.EnableSensitiveDataLogging();
