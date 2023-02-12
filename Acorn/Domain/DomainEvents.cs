@@ -7,6 +7,6 @@ public static class DomainEvents
     public static async Task Raise<T>(T args) where T : INotification
     {
         var mediator = Publisher.Invoke();
-        await mediator.Publish<T>(args);
+        await mediator.Publish(args);
     }
 }

@@ -10,6 +10,9 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Not a huge fan of this, but MediatR needs it to resolve the DB context...
+builder.Host.UseDefaultServiceProvider(options => options.ValidateScopes = false);
+
 builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Acorn", Version = "v1" }));
@@ -50,6 +53,6 @@ app.UseEndpoints(endpoints =>
 });
 
 var serviceProvider = app.Services;
-DomainEvents.Publisher = () => serviceProvider.GetRequiredService<IPublisher>();
+DomainEvents.Publisher = serviceProvider.GetRequiredService<IPublisher>;
 
 app.Run();

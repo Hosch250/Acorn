@@ -9,10 +9,8 @@ public class CreatingTagValidationHandler : INotificationHandler<CreatingTag>
 
     public CreatingTagValidationHandler(CreatingTagValidator validator) => this.validator = validator;
 
-    public Task Handle(CreatingTag @event, CancellationToken cancellationToken)
+    public async Task Handle(CreatingTag @event, CancellationToken cancellationToken)
     {
-        validator.ValidateAndThrow(@event.Entity);
-
-        return Task.CompletedTask;
+        await validator.ValidateAndThrowAsync(@event.Entity);
     }
 }

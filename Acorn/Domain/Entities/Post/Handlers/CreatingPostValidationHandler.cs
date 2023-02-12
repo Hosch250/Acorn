@@ -9,10 +9,8 @@ public class CreatingPostValidationHandler : INotificationHandler<CreatingPost>
 
     public CreatingPostValidationHandler(CreatingPostValidator validator) => this.validator = validator;
 
-    public Task Handle(CreatingPost @event, CancellationToken cancellationToken)
+    public async Task Handle(CreatingPost @event, CancellationToken cancellationToken)
     {
-        validator.ValidateAndThrow(@event.Entity);
-
-        return Task.CompletedTask;
+        await validator.ValidateAndThrowAsync(@event.Entity);
     }
 }
