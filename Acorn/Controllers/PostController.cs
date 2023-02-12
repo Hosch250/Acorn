@@ -55,7 +55,7 @@ public class PostController : ControllerBase
             return StatusCode(404);
         }
 
-        return Ok(response);
+        return Ok();
     }
 
     [HttpPost("{id}/downvote")]
@@ -67,6 +67,6 @@ public class PostController : ControllerBase
             return StatusCode(404);
         }
 
-        return Ok(response);
+        return Ok();
     }
 }

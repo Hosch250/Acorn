@@ -21,6 +21,7 @@ public class PostApplication : IPostApplication
     public async Task<List<ApiContracts.Post>> GetAll(int skip = 0)
     {
         var posts = await context.Posts
+            .Include(i => i.Tags)
             .Include(i => i.Votes)
             .OrderByDescending(o => o.CreatedOn)
             .Skip(skip)
@@ -32,7 +33,10 @@ public class PostApplication : IPostApplication
 
     public async Task<ApiContracts.Post?> Get(Guid id)
     {
-        var post = await context.Posts.Include(i => i.Votes).FirstOrDefaultAsync(f => f.Id == id);
+        var post = await context.Posts
+            .Include(i => i.Tags)
+            .Include(i => i.Votes)
+            .FirstOrDefaultAsync(f => f.Id == id);
         if (post is null)
         {
             return null;
