@@ -69,7 +69,7 @@ namespace Acorn.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Votes");
+                    b.ToTable("Vote");
                 });
 
             modelBuilder.Entity("Acorn.Domain.Entities.Tag.Tag", b =>
@@ -104,7 +104,7 @@ namespace Acorn.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("PostTag", b =>

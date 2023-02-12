@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Acorn.Migrations
 {
     [DbContext(typeof(MySqlContext))]
-    [Migration("20230212050243_Tags")]
-    partial class Tags
+    [Migration("20230212192704_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,7 +72,7 @@ namespace Acorn.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("Votes");
+                    b.ToTable("Vote");
                 });
 
             modelBuilder.Entity("Acorn.Domain.Entities.Tag.Tag", b =>
@@ -107,7 +107,7 @@ namespace Acorn.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tag");
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("PostTag", b =>
