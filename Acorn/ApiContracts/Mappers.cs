@@ -7,5 +7,6 @@ public class Mappers : Profile
     public Mappers()
     {
         CreateMap<Domain.Entities.Post.Post, Post>();
+        CreateMap<Domain.Entities.Tag.Tag, Tag>();
     }
 }

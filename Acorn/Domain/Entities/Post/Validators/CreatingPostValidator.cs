@@ -8,5 +8,6 @@ public class CreatingPostValidator : AbstractValidator<Post>
     {
         RuleFor(x => x.Title).NotEmpty();
         RuleFor(x => x.Body).NotEmpty();
+        RuleFor(x => x.Tags).NotEmpty();
     }
 }

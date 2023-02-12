@@ -1,5 +1,4 @@
-﻿using Acorn.ApiContracts;
-using Acorn.Infrastructure;
+﻿using Acorn.Infrastructure;
 using Acorn.Domain.Entities.Post;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -19,16 +18,16 @@ public class PostApplication : IPostApplication
         this.mapper = mapper;
     }
 
-    // todo: update this to take skip values
-    public async Task<List<ApiContracts.Post>> GetAll()
+    public async Task<List<ApiContracts.Post>> GetAll(int skip = 0)
     {
         var posts = await context.Posts
             .Include(i => i.Votes)
             .OrderByDescending(o => o.CreatedOn)
+            .Skip(skip)
             .Take(20)
             .ToListAsync();
 
-        return posts.Select(mapper.Map<Domain.Entities.Post.Post, ApiContracts.Post>).ToList();
+        return posts.Select(mapper.Map<Post, ApiContracts.Post>).ToList();
     }
 
     public async Task<ApiContracts.Post?> Get(Guid id)
@@ -39,18 +38,18 @@ public class PostApplication : IPostApplication
             return null;
         }
 
-        return mapper.Map<Domain.Entities.Post.Post, ApiContracts.Post>(post);
+        return mapper.Map<Post, ApiContracts.Post>(post);
     }
 
-    public async Task<ApiContracts.Post> Create(CreatePost post)
+    public async Task<ApiContracts.Post> Create(ApiContracts.CreatePost post)
     {
         // todo: get logged in user id
-        var createdPost = await postFactory.CreatePostAsync(post.Title, post.Body, Guid.NewGuid());
+        var createdPost = await postFactory.CreatePostAsync(post.Title, post.Body, post.Tags, Guid.NewGuid());
 
         await context.Posts.AddAsync(createdPost);
         await context.SaveChangesAsync();
 
-        return mapper.Map<Domain.Entities.Post.Post, ApiContracts.Post>(createdPost);
+        return mapper.Map<Post, ApiContracts.Post>(createdPost);
     }
 
     public async Task Delete(Guid id)
@@ -67,10 +66,10 @@ public class PostApplication : IPostApplication
         }
 
         // todo: get logged in user id
-        await post.Upvote(Guid.NewGuid());
+        post.Upvote(Guid.NewGuid());
         await context.SaveChangesAsync();
 
-        return mapper.Map<Domain.Entities.Post.Post, ApiContracts.Post>(post);
+        return mapper.Map<Post, ApiContracts.Post>(post);
     }
 
     public async Task<ApiContracts.Post?> Downvote(Guid id)
@@ -82,9 +81,9 @@ public class PostApplication : IPostApplication
         }
 
         // todo: get logged in user id
-        await post.Downvote(Guid.NewGuid());
+        post.Downvote(Guid.NewGuid());
         await context.SaveChangesAsync();
 
-        return mapper.Map<Domain.Entities.Post.Post, ApiContracts.Post>(post);
+        return mapper.Map<Post, ApiContracts.Post>(post);
     }
 }

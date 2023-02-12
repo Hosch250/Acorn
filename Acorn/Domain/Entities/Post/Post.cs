@@ -1,5 +1,3 @@
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-
 namespace Acorn.Domain.Entities.Post;
 
 public class Post : AggregateRoot
@@ -16,11 +14,12 @@ public class Post : AggregateRoot
         CreatedOn = createdOn;
     }
 
-    public Post(string title, string body, Guid createdBy)
+    public Post(string title, string body, List<Tag.Tag> tags, Guid createdBy)
     {
         Title = title;
         Body = body;
         SetCreatedBy(createdBy);
+        Tags.AddRange(tags);
 
         Id = Guid.Empty;
     }
@@ -31,9 +30,10 @@ public class Post : AggregateRoot
     public int UpvoteCount { get => Votes.Count(w => w.Type == VoteType.Upvote && w.RevokedOn is null); }
     public int DownvoteCount { get => Votes.Count(w => w.Type == VoteType.Downvote && w.RevokedOn is null); }
 
-    public virtual List<Vote> Votes { get; private set; } = new();
+    public List<Vote> Votes { get; } = new();
+    public List<Tag.Tag> Tags { get; } = new();
 
-    public async Task Upvote(Guid voteBy)
+    public void Upvote(Guid voteBy)
     {
         // validation happens in any event handler listening for this event
         // e.g. Does the user have the upvote permission, etc
@@ -54,7 +54,7 @@ public class Post : AggregateRoot
         Votes.Add(Vote.Upvote(Id, voteBy));
     }
 
-    public async Task Downvote(Guid voteBy)
+    public void Downvote(Guid voteBy)
     {
         // validation happens in any event handler listening for this event
         // e.g. Does the user have the upvote permission, etc

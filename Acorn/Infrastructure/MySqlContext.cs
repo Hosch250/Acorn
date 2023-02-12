@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Acorn.Domain.Entities.Post;
+using Acorn.Domain.Entities.Tag;
 
 namespace Acorn.Infrastructure;
 
@@ -12,8 +13,8 @@ public class MySqlContext : DbContext
         this.configuration = configuration;
     }
 
+    public DbSet<Tag> Tags { get; set; }
     public DbSet<Post> Posts { get; set; }
-    public DbSet<Vote> Votes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
