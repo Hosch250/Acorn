@@ -2,9 +2,11 @@ using Acorn.Application;
 using Acorn.Domain;
 using Acorn.Domain.Entities.Post;
 using Acorn.Domain.Entities.Tag;
+using Acorn.Domain.Entities.User;
 using Acorn.Infrastructure;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 
@@ -17,7 +19,18 @@ builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Acorn", Version = "v1" }));
 
-builder.Services.AddDbContext<MySqlContext>();
+builder.Services.AddDbContext<IDbContext, MySqlContext>();
+
+builder.Services.AddDefaultIdentity<User>(options => {
+    options.User.RequireUniqueEmail = true;
+    options.SignIn.RequireConfirmedAccount = true;
+}).AddEntityFrameworkStores<MySqlContext>();
+
+builder.Services.AddIdentityServer()
+    .AddApiAuthorization<User, MySqlContext>();
+
+builder.Services.AddAuthentication()
+    .AddIdentityServerJwt();
 
 builder.Services.AddTransient<IPostApplication, PostApplication>();
 builder.Services.AddTransient<PostFactory>();
@@ -42,10 +55,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Acorn v1"));
 }
+else
+{
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseIdentityServer();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {

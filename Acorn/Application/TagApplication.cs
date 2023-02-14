@@ -8,10 +8,10 @@ namespace Acorn.Application;
 
 public class TagApplication : ITagApplication
 {
-    private readonly MySqlContext context;
+    private readonly IDbContext context;
     private readonly IMapper mapper;
 
-    public TagApplication(MySqlContext context, IMapper mapper)
+    public TagApplication(IDbContext context, IMapper mapper)
     {
         this.context = context;
         this.mapper = mapper;

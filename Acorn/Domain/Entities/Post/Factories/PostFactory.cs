@@ -6,10 +6,10 @@ namespace Acorn.Domain.Entities.Post;
 
 public class PostFactory
 {
-    private readonly MySqlContext context;
+    private readonly IDbContext context;
     private readonly TagFactory tagFactory;
 
-    public PostFactory(MySqlContext context, TagFactory tagFactory)
+    public PostFactory(IDbContext context, TagFactory tagFactory)
     {
         this.context = context;
         this.tagFactory = tagFactory;

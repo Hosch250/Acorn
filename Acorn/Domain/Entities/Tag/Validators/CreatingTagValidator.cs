@@ -6,7 +6,7 @@ namespace Acorn.Domain.Entities.Tag;
 
 public class CreatingTagValidator : AbstractValidator<Tag>
 {
-    public CreatingTagValidator(MySqlContext context)
+    public CreatingTagValidator(IDbContext context)
     {
         RuleFor(x => x.Name).NotEmpty();
         RuleFor(x => x.Name).CustomAsync(async (value, vContext, ct) =>

@@ -7,11 +7,11 @@ namespace Acorn.Application;
 
 public class PostApplication : IPostApplication
 {
-    private readonly MySqlContext context;
+    private readonly IDbContext context;
     private readonly PostFactory postFactory;
     private readonly IMapper mapper;
 
-    public PostApplication(MySqlContext context, PostFactory postFactory, IMapper mapper)
+    public PostApplication(IDbContext context, PostFactory postFactory, IMapper mapper)
     {
         this.context = context;
         this.postFactory = postFactory;
