@@ -21,16 +21,30 @@ builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title =
 
 builder.Services.AddDbContext<IDbContext, MySqlContext>();
 
-builder.Services.AddDefaultIdentity<User>(options => {
-    options.User.RequireUniqueEmail = true;
-    options.SignIn.RequireConfirmedAccount = true;
-}).AddEntityFrameworkStores<MySqlContext>();
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<MySqlContext>();
 
 builder.Services.AddIdentityServer()
     .AddApiAuthorization<User, MySqlContext>();
 
-builder.Services.AddAuthentication()
+builder.Services.AddAuthentication("token")
     .AddIdentityServerJwt();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Authenticated", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+    });
+
+    // todo: rename
+    // treating "Tier1" as the first tier of permissions granted, based on earned rep
+    // we can also add policies based on other claims, etc., such as whether the user is question-banned
+    options.AddPolicy("Tier1", policy =>
+    {
+        policy.RequireClaim("Tier1");
+    });
+});
 
 builder.Services.AddTransient<IPostApplication, PostApplication>();
 builder.Services.AddTransient<PostFactory>();
@@ -44,7 +58,10 @@ Assembly.GetExecutingAssembly().GetTypes()
     .ToList()
     .ForEach(f => builder.Services.AddTransient(f));
 
-builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
+builder.Services.AddMediatR(a =>
+{
+    a.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+});
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
