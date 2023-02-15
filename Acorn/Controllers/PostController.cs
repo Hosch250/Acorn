@@ -33,7 +33,7 @@ public class PostController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost]
+    [HttpPost()]
     public async Task<Post?> Create([FromBody] CreatePost post)
     {
         return await postApplication.Create(post);

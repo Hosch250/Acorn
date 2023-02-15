@@ -1,5 +1,6 @@
 using Acorn.Application;
 using Acorn.Domain;
+using Acorn.Domain.Entities.Category;
 using Acorn.Domain.Entities.Post;
 using Acorn.Domain.Entities.Tag;
 using Acorn.Domain.Entities.User;
@@ -21,6 +22,7 @@ builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title =
 
 builder.Services.AddDbContext<IDbContext, MySqlContext>();
 
+// todo: pull this out into an `AddIdentity` call
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<MySqlContext>();
 
@@ -46,11 +48,16 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
+// todo: pull these out into an `AddPosts`, etc, call
+// or maybe an `AddLocalServices` call?
 builder.Services.AddTransient<IPostApplication, PostApplication>();
 builder.Services.AddTransient<PostFactory>();
 
 builder.Services.AddTransient<ITagApplication, TagApplication>();
 builder.Services.AddTransient<TagFactory>();
+
+builder.Services.AddTransient<ICategoryApplication, CategoryApplication>();
+builder.Services.AddTransient<CategoryFactory>();
 
 Assembly.GetExecutingAssembly().GetTypes()
     .Where(w => w.BaseType is { IsGenericType: true } &&

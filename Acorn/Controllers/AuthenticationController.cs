@@ -19,7 +19,7 @@ public class AuthenticationController : ControllerBase
         this.userManager = userManager;
     }
 
-    [HttpPost("Login")]
+    [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
     {
         var claims = new List<Claim>
@@ -52,14 +52,14 @@ public class AuthenticationController : ControllerBase
         return Challenge();
     }
 
-    [HttpGet("Logout")]
+    [HttpGet("logout")]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync();
         return Redirect("/");
     }
 
-    [HttpPost("Create")]
+    [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreateUserRequest createUserRequest)
     {
         if (createUserRequest.Password != createUserRequest.PasswordConfirmation)

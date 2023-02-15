@@ -1,3 +1,4 @@
+using Acorn.Domain.Entities.SiteSettings;
 using Microsoft.AspNetCore.Server.IIS.Core;
 
 namespace Acorn.Domain.Entities.Tag;
@@ -21,13 +22,12 @@ public class Tag : AggregateRoot
 
     public Tag(string name, Guid tagSetId, Guid createdBy)
     {
-        Name = name;
-        TagSetId = tagSetId;
-        SetCreatedBy(createdBy);
-
         Id = Guid.Empty;
+        Name = name;
         Description = string.Empty;
         ShortDescription = string.Empty;
+        TagSetId = tagSetId;
+        SetCreatedBy(createdBy);
     }
 
     public Guid Id { get; private set; }
@@ -38,7 +38,7 @@ public class Tag : AggregateRoot
     public Guid? ParentId { get; private set; }
 
     public Tag? Parent { get; }
-    // public TagSet TagSet { get; }
+    public TagSet TagSet { get; }
     public List<Post.Post> Posts { get; } = new();
 
     public Tag WithName(string name)

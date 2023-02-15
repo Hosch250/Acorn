@@ -11,6 +11,6 @@ public class CreatingTagValidationHandler : INotificationHandler<CreatingTag>
 
     public async Task Handle(CreatingTag @event, CancellationToken cancellationToken)
     {
-        await validator.ValidateAndThrowAsync(@event.Entity);
+        await validator.ValidateAndThrowAsync(@event.Entity, cancellationToken);
     }
 }

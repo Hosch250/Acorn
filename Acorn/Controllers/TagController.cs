@@ -33,7 +33,7 @@ public class TagController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost]
+    [HttpPut]
     public async Task<IActionResult> Edit([FromBody] EditTag tag)
     {
         var response = await tagApplication.Edit(tag);

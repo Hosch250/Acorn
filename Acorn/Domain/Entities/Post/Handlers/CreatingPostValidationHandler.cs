@@ -11,6 +11,6 @@ public class CreatingPostValidationHandler : INotificationHandler<CreatingPost>
 
     public async Task Handle(CreatingPost @event, CancellationToken cancellationToken)
     {
-        await validator.ValidateAndThrowAsync(@event.Entity);
+        await validator.ValidateAndThrowAsync(@event.Entity, cancellationToken);
     }
 }

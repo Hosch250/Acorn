@@ -16,12 +16,11 @@ public class Post : AggregateRoot
 
     public Post(string title, string body, List<Tag.Tag> tags, Guid createdBy)
     {
+        Id = Guid.Empty;
         Title = title;
         Body = body;
         SetCreatedBy(createdBy);
         Tags.AddRange(tags);
-
-        Id = Guid.Empty;
     }
 
     public Guid Id { get; private set; }

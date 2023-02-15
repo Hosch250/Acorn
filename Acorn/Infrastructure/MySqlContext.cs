@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Acorn.Domain.Entities.Category;
 using Acorn.Domain.Entities.Post;
 using Acorn.Domain.Entities.Tag;
 using Acorn.Domain.Entities.User;
@@ -13,8 +14,9 @@ namespace Acorn.Infrastructure;
 // auth system designed from https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-api-authorization?source=recommendations&view=aspnetcore-7.0
 public interface IDbContext : IPersistedGrantDbContext
 {
-    public DbSet<Tag> Tags { get; set; }
+    public DbSet<Category> Category { get; set; }
     public DbSet<Post> Posts { get; set; }
+    public DbSet<Tag> Tags { get; set; }
     public DbSet<User> Users { get; set; }
 
     new Task<int> SaveChangesAsync(CancellationToken cancellationToken);
@@ -31,12 +33,10 @@ public class MySqlContext : ApiAuthorizationDbContext<User>, IDbContext
         this.configuration = configuration;
     }
 
-    public DbSet<Tag> Tags { get; set; }
+    public DbSet<Category> Category { get; set; }
     public DbSet<Post> Posts { get; set; }
+    public DbSet<Tag> Tags { get; set; }
     public DbSet<User> Users { get; set; }
-    public DbSet<PersistedGrant> PersistedGrants { get; set; }
-    public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; }
-    public DbSet<Key> Keys { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
