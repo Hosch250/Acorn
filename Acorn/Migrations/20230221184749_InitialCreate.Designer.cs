@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Acorn.Migrations
 {
     [DbContext(typeof(MySqlContext))]
-    [Migration("20230212192704_InitialCreate")]
+    [Migration("20230221184749_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -19,8 +19,59 @@ namespace Acorn.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.2")
+                .HasAnnotation("ProductVersion", "7.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("Acorn.Domain.Entities.Category.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DisplayPostTypes")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsHomepage")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("LicenseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinTrustLevel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("TagSetId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<bool>("UseForAdvertisement")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("UseForHotPosts")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LicenseId");
+
+                    b.HasIndex("TagSetId");
+
+                    b.ToTable("Category");
+                });
 
             modelBuilder.Entity("Acorn.Domain.Entities.Post.Post", b =>
                 {
@@ -75,6 +126,39 @@ namespace Acorn.Migrations
                     b.ToTable("Vote");
                 });
 
+            modelBuilder.Entity("Acorn.Domain.Entities.SiteSettings.License", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("License");
+                });
+
+            modelBuilder.Entity("Acorn.Domain.Entities.SiteSettings.TagSet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TagSet");
+                });
+
             modelBuilder.Entity("Acorn.Domain.Entities.Tag.Tag", b =>
                 {
                     b.Property<Guid>("Id")
@@ -123,6 +207,25 @@ namespace Acorn.Migrations
                     b.HasIndex("TagsId");
 
                     b.ToTable("PostTag");
+                });
+
+            modelBuilder.Entity("Acorn.Domain.Entities.Category.Category", b =>
+                {
+                    b.HasOne("Acorn.Domain.Entities.SiteSettings.License", "License")
+                        .WithMany()
+                        .HasForeignKey("LicenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Acorn.Domain.Entities.SiteSettings.TagSet", "TagSet")
+                        .WithMany()
+                        .HasForeignKey("TagSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("License");
+
+                    b.Navigation("TagSet");
                 });
 
             modelBuilder.Entity("Acorn.Domain.Entities.Post.Vote", b =>

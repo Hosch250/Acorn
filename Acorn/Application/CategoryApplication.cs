@@ -6,6 +6,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Acorn.Application;
 
+public interface ICategoryApplication
+{
+    Task<List<ApiContracts.Category>> GetAll();
+    Task<ApiContracts.Category?> Get(Guid id);
+    Task<ApiContracts.Category> Create(ApiContracts.CreateCategory category);
+    Task<ApiContracts.Category?> Edit(ApiContracts.Category category);
+    Task Delete(Guid id);
+}
+
 public class CategoryApplication : ICategoryApplication
 {
     private readonly IDbContext context;

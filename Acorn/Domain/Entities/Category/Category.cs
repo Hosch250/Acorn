@@ -1,8 +1,9 @@
 using Acorn.Domain.Entities.SiteSettings;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Acorn.Domain.Entities.Category;
 
-// note: make sure to add categoryOrder field as CSV to site settings
+// todo: make sure to add categoryOrder field as CSV to site settings
 // that makes it WAY easier to adjust the category order in one spot, vs updating all other categories
 public class Category : AggregateRoot
 {
@@ -134,5 +135,7 @@ public class Category : AggregateRoot
     }
 
     public virtual TagSet TagSet { get; set; }
+
+    [ForeignKey(nameof(LicenseId))]
     public virtual License License { get; set; }
 }

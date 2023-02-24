@@ -1,6 +1,7 @@
 using Acorn.Application;
 using Acorn.Domain;
 using Acorn.Domain.Entities.Category;
+using Acorn.Domain.Entities.Community;
 using Acorn.Domain.Entities.Post;
 using Acorn.Domain.Entities.Tag;
 using Acorn.Domain.Entities.User;
@@ -21,16 +22,22 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Acorn", Version = "v1" }));
 
 builder.Services.AddDbContext<IDbContext, MySqlContext>();
+builder.Services.AddDbContext<IGlobalDbContext, GlobalMySqlContext>();
+
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // todo: pull this out into an `AddIdentity` call
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<MySqlContext>();
+    .AddEntityFrameworkStores<GlobalMySqlContext>();
 
 builder.Services.AddIdentityServer()
-    .AddApiAuthorization<User, MySqlContext>();
+    .AddApiAuthorization<User, GlobalMySqlContext>();
 
-builder.Services.AddAuthentication("token")
+builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
+
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 builder.Services.AddAuthorization(options =>
 {
@@ -59,6 +66,9 @@ builder.Services.AddTransient<TagFactory>();
 builder.Services.AddTransient<ICategoryApplication, CategoryApplication>();
 builder.Services.AddTransient<CategoryFactory>();
 
+builder.Services.AddTransient<ICommunityApplication, CommunityApplication>();
+builder.Services.AddTransient<CommunityFactory>();
+
 Assembly.GetExecutingAssembly().GetTypes()
     .Where(w => w.BaseType is { IsGenericType: true } &&
         w.BaseType.GetGenericTypeDefinition() == typeof(AbstractValidator<>))
@@ -70,6 +80,11 @@ builder.Services.AddMediatR(a =>
     a.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
 });
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+builder.Services.AddCors(o => o.AddPolicy("default", p =>
+{
+    p.WithOrigins("http://localhost:3000");
+}));
 
 var app = builder.Build();
 
@@ -87,6 +102,7 @@ else
 app.UseHttpsRedirection();
 
 app.UseRouting();
+app.UseCors("default");
 
 app.UseAuthentication();
 app.UseIdentityServer();
@@ -96,6 +112,8 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
 });
+
+app.MapFallbackToFile("index.html");
 
 var serviceProvider = app.Services;
 DomainEvents.Publisher = serviceProvider.GetRequiredService<IPublisher>;

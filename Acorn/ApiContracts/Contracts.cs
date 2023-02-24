@@ -31,3 +31,17 @@ public record CreateCategory(
         bool UseForAdvertisement,
         Guid TagSetId,
         LicenseEnum LicenseId);
+
+public record Community(
+        Guid Id,
+        string Name,
+        string Host,
+        bool IsFake,
+        bool IsHidden);
+
+public record CreateCommunity(
+        Guid Id,
+        string Name,
+        string Host,
+        bool IsFake,
+        bool IsHidden);

@@ -1,10 +1,17 @@
-﻿using Acorn.Domain.Entities.Post;
-using Acorn.Domain.Entities.Tag;
+﻿using Acorn.Domain.Entities.Tag;
 using Acorn.Infrastructure;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Acorn.Application;
+
+public interface ITagApplication
+{
+    Task<List<ApiContracts.Tag>> GetAll(int skip = 0);
+    Task<ApiContracts.Tag?> Get(Guid id);
+    Task<ApiContracts.Tag?> Edit(ApiContracts.EditTag post);
+    Task Delete(Guid id);
+}
 
 public class TagApplication : ITagApplication
 {

@@ -5,6 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Acorn.Application;
 
+public interface IPostApplication
+{
+    Task<List<ApiContracts.Post>> GetAll(int skip = 0);
+    Task<ApiContracts.Post?> Get(Guid id);
+    Task<ApiContracts.Post> Create(ApiContracts.CreatePost post);
+    Task Delete(Guid id);
+    Task<ApiContracts.Post?> Upvote(Guid id);
+    Task<ApiContracts.Post?> Downvote(Guid id);
+}
+
 public class PostApplication : IPostApplication
 {
     private readonly IDbContext context;
